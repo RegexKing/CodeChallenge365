@@ -60,6 +60,15 @@ namespace Adding.Tests
         }
 
         [TestMethod()]
+        public void ContainsInvalidChar_SingleLetterInInput_ReturnTrue()
+        {
+            Calculator calculator = new Calculator();
+            string invalidNumber = "12c4";
+
+            Assert.IsTrue(calculator.ContainsInvalidChar(invalidNumber));
+        }
+
+        [TestMethod()]
         public void AddNumbers_InputMissingNumbers_ReturnZero()
         {
             Calculator calculator = new Calculator();
@@ -143,6 +152,30 @@ namespace Adding.Tests
             Calculator calculator = new Calculator();
             calculator.Input = "2,1001,6";
             int expectedSum = 8;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void AddNumbers_UsingSingleCustomDelimter_ReturnCorrectSum()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "//;\\n2;5";
+            int expectedSum = 7;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void AddNumbers_MoreThanOneDelimterArgument_ReturnCorrectSumIgnoreOtherDelimterArgument()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "//;\\n//a\\n2;5";
+            int expectedSum = 7;
 
             int calculatedSum = calculator.AddNumbers();
 

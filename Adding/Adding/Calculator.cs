@@ -39,12 +39,12 @@ namespace Adding
                 DetectNegative(strNum);
             }
 
-            if (isEmpty || ContainsInvalidChar(strNum)) //Convert missing/invalid numbers to 0
+            if (isEmpty || ContainsInvalidChar(strNum)) //convert missing/invalid numbers to 0
             {
                 return 0;
             }
 
-            int castedNum = Int32.Parse(strNum);
+            int castedNum = int.Parse(strNum); //cast string representation to number
 
             if (castedNum > 1000)
             {
@@ -76,17 +76,52 @@ namespace Adding
             string validNumberPattern = @"\D";
             Regex checkValidNumber = new Regex(validNumberPattern);
 
-            return checkValidNumber.Match(strNum).Success;
+            return checkValidNumber.IsMatch(strNum);
         }
 
         // split input into array of strings
         public string[] SplitNums() {
 
-            string inputStr = Input.Replace("\\n", ","); //replace newline characters with comma
+            string inputStr = Input;
+
+            inputStr = ConvertDelimiters(inputStr);
 
             string[] numbersList = inputStr.Split(','); //seperate numbers by comma
 
             return numbersList;
         }
+
+        //manages alternative delimiters
+        public string ConvertDelimiters(string inputStr)
+        {
+            string numString = inputStr;
+            string delimArg;
+
+            string customDelimPattern = @"^\/\/.*?\\n"; //pattern for custom delimiter argument
+            Regex delimRegex = new Regex(customDelimPattern);
+            Match delimMatch = delimRegex.Match(inputStr);
+
+            if (delimMatch.Success) //check if argument for custom delim is found
+            {
+                //seperate delimiter arguemnts from list of numbers to add
+                delimArg = inputStr.Substring(delimMatch.Index, delimMatch.Length);
+                numString = inputStr.Substring(delimMatch.Length);
+
+                numString = ApplyCustomDelimiters(delimArg, numString);
+            }
+
+            numString = numString.Replace("\\n", ","); //replace newline characters with comma
+
+            return numString;
+        }
+
+        //converts custom delimter to comma
+        public string ApplyCustomDelimiters(string delimArg, string numString)
+        {
+            string delim = delimArg.Substring(2, 1); //
+
+            return numString.Replace(delim, ","); ;
+        }
+
     }
 }
