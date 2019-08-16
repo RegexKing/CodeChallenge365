@@ -171,6 +171,30 @@ namespace Adding.Tests
         }
 
         [TestMethod()]
+        public void AddNumbers_UsingMissingCustomDelimter_ReturnCorrectSumIgnoreDelimterArg()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "//\\n123,21"; // expected there are no custom delimiters specified
+            int expectedSum = 144;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void AddNumbers_UsingMultipleCustomDelimter_ReturnCorrectSum()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "//[***]\\n11***22***33";
+            int expectedSum = 66;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
         public void AddNumbers_MoreThanOneDelimterArgument_ReturnCorrectSumIgnoreOtherDelimterArgument()
         {
             Calculator calculator = new Calculator();
@@ -180,6 +204,31 @@ namespace Adding.Tests
             int calculatedSum = calculator.AddNumbers();
 
             Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void ConvertDelimiters_UnclosedRightBracket_ReturnNotEqualToAssumedForm()
+        {
+            Calculator calculator = new Calculator();
+            string input = "//[*;\n12#;4"; //user makes a typo forgets to close bracket
+            string assumedForm = "12,4";
+
+            string formattedNum = calculator.ConvertDelimiters(input);
+
+            Assert.AreNotEqual(assumedForm, actual: formattedNum);
+        }
+
+        [TestMethod()]
+        public void ApplyCustomDelimiters_MixedCharactersInDelimArg_ReturnCorrectStringFormat()
+        {
+            Calculator calculator = new Calculator();
+            string delimArgTest  = "//[a*b[]\\n"; //testing with a left bracket in delimter entry
+            string numStringTest = "10a*b[4";
+            string expectedString = "10,4";
+
+            string formattedNum = calculator.ApplyCustomDelimiters(delimArgTest, numStringTest);
+
+            Assert.AreEqual(expectedString, actual: formattedNum);
         }
     }
 }

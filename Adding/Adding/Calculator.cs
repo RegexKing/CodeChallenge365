@@ -118,10 +118,59 @@ namespace Adding
         //converts custom delimter to comma
         public string ApplyCustomDelimiters(string delimArg, string numString)
         {
-            string delim = delimArg.Substring(2, 1); //
+            //trim the delim argument
+            int startIndex = "//".Length;
+            int endIndex = delimArg.Length - "\\n".Length - startIndex;
+            string delim = delimArg.Substring(startIndex, endIndex);
 
-            return numString.Replace(delim, ","); ;
+            //if custom delim is empty, delim arg is an invalid number
+            if (string.IsNullOrEmpty(delim))
+            {
+                return numString;
+            }
+
+            //check if only a single delimter character is specified
+            if (delim.Length == 1)
+            {
+                return numString.Replace(delim, ",");
+            }
+
+            if (delim.Length > 2)
+            {
+                Queue<char> queue = new Queue<char>(delim);
+
+                //if delimter collection begin with "[", delim arg is an invalid number
+                if (queue.Dequeue() != '[')
+                {
+                    return numString;
+                }
+
+                string delimBuilder = "";
+                bool isBuilding = true;
+
+                while (queue.Count > 0)
+                {
+                    char nextChar = queue.Dequeue();
+
+                    if (nextChar != ']' && isBuilding)
+                    {
+                        delimBuilder += nextChar;
+                    }
+                    else if (nextChar == ']' && queue.Count == 0)
+                    {
+                        return numString.Replace(delimBuilder, ",");
+                    }
+                    else
+                    {
+                        return numString; //delim arg is not formatted with brackets properly
+                    }
+                }
+            }
+
+            return numString;
         }
+
+
 
     }
 }
