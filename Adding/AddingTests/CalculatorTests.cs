@@ -106,5 +106,35 @@ namespace Adding.Tests
 
             CollectionAssert.AreEqual(splitNums, expectedNums, "Something went wrong in the split: ");
         }
+
+        [TestMethod()]
+        public void DetectNegative_findNegativeNumber_ThrowsException()
+        {
+            Calculator calculator = new Calculator();
+            string num = "-13";
+
+            Assert.ThrowsException<NegativeNumberException>(() => calculator.DetectNegative(num));
+        }
+
+        [TestMethod()]
+        public void AddNumbers_InputContainsNegativeNumber_ThrowsException()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "23,-4";
+
+            Assert.ThrowsException<NegativeNumberException>(() => calculator.AddNumbers());
+        }
+
+        [TestMethod()]
+        public void AddNumbers_InputContainsNegativeCharOnly_ReturnCorrectSum()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "7,-,13"; //expecting - to be evaluated as invalid char
+            int expectedSum = 20;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
     }
 }

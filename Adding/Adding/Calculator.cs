@@ -32,21 +32,44 @@ namespace Adding
         //convert missing/invalid numbers to 0
         public string SimplifyNum(string strNum)
         {
-            if (strNum == "") //Convert missing numbers to 0
+            bool isEmpty = string.IsNullOrEmpty(strNum);
+
+            if (!isEmpty) //skip negative check if string is empty
             {
-                return "0";
+                DetectNegative(strNum);
             }
 
-            //detect if there is a non-digit character in the string
-            string validNumberPattern = @"\D";
-            Regex checkValidNumber = new Regex(validNumberPattern);
-
-            if (checkValidNumber.Match(strNum).Success) //convert invalid number to 0
+            if (isEmpty || ContainsInvalidChar(strNum)) //Convert missing/invalid numbers to 0
             {
                 return "0";
             }
 
             return strNum;
+        }
+
+        // throw exception if negative number is found
+        public void DetectNegative(string strNum)
+        {
+            if (strNum[0] == '-') //check if first char in string is -
+            {
+                string negativeNumberPattern = @"^\-\d+$"; //pattern for digit-only negative number
+                Regex checkValidNegativeNumber = new Regex(negativeNumberPattern);
+
+                if (checkValidNegativeNumber.Match(strNum).Success)
+                {
+                    throw new NegativeNumberException("Negative number found in input.");
+                }
+            }
+        }
+
+        //detect if there is a non-digit character in the string
+        public bool ContainsInvalidChar(string strNum)
+        {
+            //find match of non-digit character
+            string validNumberPattern = @"\D";
+            Regex checkValidNumber = new Regex(validNumberPattern);
+
+            return checkValidNumber.Match(strNum).Success;
         }
 
         // split input into array of strings
