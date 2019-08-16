@@ -109,7 +109,7 @@ namespace Adding.Tests
         {
             Calculator calculator = new Calculator();
             calculator.Input = "1\\n2,3\\n\\n5,6\\n7";
-            string[] expectedNums = { "1", "2", "3", "", "5", "6", "7" }; //expecting missing num with 2 adjacent newline characters
+            string[] expectedNums = { "1", "2", "3", "", "5", "6", "7" }; //expecting missing num from 2 adjacent newline characters
 
             string[] splitNums = calculator.SplitNums();
 
@@ -129,7 +129,7 @@ namespace Adding.Tests
         public void AddNumbers_InputContainsNegativeNumber_ThrowsException()
         {
             Calculator calculator = new Calculator();
-            calculator.Input = "23,-4";
+            calculator.Input = "23,22,-1";
 
             Assert.ThrowsException<NegativeNumberException>(() => calculator.AddNumbers());
         }
@@ -183,7 +183,7 @@ namespace Adding.Tests
         }
 
         [TestMethod()]
-        public void AddNumbers_UsingMultipleCustomDelimter_ReturnCorrectSum()
+        public void AddNumbers_UsingGreaterLengthCustomDelimter_ReturnCorrectSum()
         {
             Calculator calculator = new Calculator();
             calculator.Input = "//[***]\\n11***22***33";
@@ -229,6 +229,45 @@ namespace Adding.Tests
             string formattedNum = calculator.ApplyCustomDelimiters(delimArgTest, numStringTest);
 
             Assert.AreEqual(expectedString, actual: formattedNum);
+        }
+
+        [TestMethod()]
+        public void AddNumbers_UsingMultipleCustomDelimter_ReturnCorrectSum()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "//[*][!!][rrr]\\n11rrr22*33!!44";
+            int expectedSum = 110;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void GetDelimList_MissingOpeningBracket_ReturnNull()
+        {
+            Calculator calculator = new Calculator();
+            string input = "*][!!][rrr]";
+
+            Assert.IsNull(calculator.GetDelimList(input));
+        }
+
+        [TestMethod()]
+        public void GetDelimList_InvalidDelimiterFormat_ReturnNull()
+        {
+            Calculator calculator = new Calculator();
+            string input = "[ab*]][!!]"; //extra closing bracket
+
+            Assert.IsNull(calculator.GetDelimList(input));
+        }
+
+        [TestMethod()]
+        public void GetDelimList_ValidDelimiterFormat_ReturnNotNull()
+        {
+            Calculator calculator = new Calculator();
+            string input = "[123][::!][#ab][**!][!@#%^&*()]";
+
+            Assert.IsNotNull(calculator.GetDelimList(input));
         }
     }
 }

@@ -11,6 +11,11 @@ namespace Adding
     {
         public string Input { get; set; }
 
+        private static readonly string _delimArgStart = "//";
+        private static readonly string _delimArgEnd = "\\n";
+        private static readonly char _bracketOpen = '[';
+        private static readonly char _bracketEnd = ']';
+
         public Calculator() { }
 
         //add numbers from a formatted string
@@ -22,7 +27,7 @@ namespace Adding
 
             foreach (string addend in numbers)
             {
-                int simplifiedNum = SimplifyNum(addend);
+                int simplifiedNum = SimplifyNum(addend); //reduces invalid/missing numbers to 0
                 sum += simplifiedNum;
             }
 
@@ -57,10 +62,10 @@ namespace Adding
         // throw exception if negative number is found
         public void DetectNegative(string strNum)
         {
-            if (strNum[0] == '-') //check if first char in string is -
+            if (strNum[0] == '-') //check if first char in string is "-"
             {
-                string negativeNumberPattern = @"^\-\d+$"; //pattern for digit-only negative number
-                Regex checkValidNegativeNumber = new Regex(negativeNumberPattern);
+                //pattern for digit-only negative number
+                Regex checkValidNegativeNumber = new Regex(@"^\-\d+$");
 
                 if (checkValidNegativeNumber.Match(strNum).Success)
                 {
@@ -73,8 +78,7 @@ namespace Adding
         public bool ContainsInvalidChar(string strNum)
         {
             //find match of non-digit character
-            string validNumberPattern = @"\D";
-            Regex checkValidNumber = new Regex(validNumberPattern);
+            Regex checkValidNumber = new Regex(@"\D");
 
             return checkValidNumber.IsMatch(strNum);
         }
@@ -83,7 +87,6 @@ namespace Adding
         public string[] SplitNums() {
 
             string inputStr = Input;
-
             inputStr = ConvertDelimiters(inputStr);
 
             string[] numbersList = inputStr.Split(','); //seperate numbers by comma
@@ -97,8 +100,8 @@ namespace Adding
             string numString = inputStr;
             string delimArg;
 
-            string customDelimPattern = @"^\/\/.*?\\n"; //pattern for custom delimiter argument
-            Regex delimRegex = new Regex(customDelimPattern);
+            //pattern for custom delimiter argument
+            Regex delimRegex = new Regex(@"^\/\/.*?\\n");
             Match delimMatch = delimRegex.Match(inputStr);
 
             if (delimMatch.Success) //check if argument for custom delim is found
@@ -119,8 +122,8 @@ namespace Adding
         public string ApplyCustomDelimiters(string delimArg, string numString)
         {
             //trim the delim argument
-            int startIndex = "//".Length;
-            int endIndex = delimArg.Length - "\\n".Length - startIndex;
+            int startIndex = _delimArgStart.Length;
+            int endIndex = delimArg.Length - _delimArgEnd.Length - startIndex;
             string delim = delimArg.Substring(startIndex, endIndex);
 
             //if custom delim is empty, delim arg is an invalid number
@@ -135,42 +138,67 @@ namespace Adding
                 return numString.Replace(delim, ",");
             }
 
+            //custom delimters legnth > 2
             if (delim.Length > 2)
             {
-                Queue<char> queue = new Queue<char>(delim);
+                List<string> delimList = GetDelimList(delim); //build list of delimiters to use
 
-                //if delimter collection begin with "[", delim arg is an invalid number
-                if (queue.Dequeue() != '[')
+                if (delimList == null) //check if multiple delimter format is invalid
                 {
                     return numString;
                 }
 
-                string delimBuilder = "";
-                bool isBuilding = true;
-
-                while (queue.Count > 0)
+                foreach (string delimEntry in delimList)
                 {
-                    char nextChar = queue.Dequeue();
-
-                    if (nextChar != ']' && isBuilding)
-                    {
-                        delimBuilder += nextChar;
-                    }
-                    else if (nextChar == ']' && queue.Count == 0)
-                    {
-                        return numString.Replace(delimBuilder, ",");
-                    }
-                    else
-                    {
-                        return numString; //delim arg is not formatted with brackets properly
-                    }
+                    numString = numString.Replace(delimEntry, ","); //replace each custom delimiter with comma
                 }
             }
 
             return numString;
         }
 
+        //breaks up string of bracketed delimiters into a list
+        public List<string> GetDelimList(string delim)
+        {
+            List<string> delimList = new List<string>();
+            Queue<char> queue = new Queue<char>(delim);
 
+            //if delimter collection begin with "[", delim arg is an invalid number
+            if (queue.Dequeue() != _bracketOpen)
+            {
+                return null;
+            }
 
+            string delimBuilder = ""; //holds delimiter constructions
+            bool isBuilding = true; //flag for when constructing each delimiter
+
+            while (queue.Count > 0)
+            {
+                char nextChar = queue.Dequeue();
+
+                if (nextChar != _bracketEnd && isBuilding) //checking when character is within a set of brackets
+                {
+                    delimBuilder += nextChar;
+                }
+                else if (nextChar == _bracketEnd && isBuilding) //reaching the end of a bracketed delimter entry
+                {
+                    delimList.Add(delimBuilder);
+
+                    //reset values to search for new delimiter
+                    isBuilding = false;
+                    delimBuilder = "";
+                }
+                else if (nextChar == _bracketOpen && !isBuilding) //check to start new construction of delimiter
+                {
+                    isBuilding = true;
+                }
+                else
+                {
+                    return null; //delim arg is not formatted with brackets properly
+                }
+            }
+
+            return delimList;
+        }
     }
 }
