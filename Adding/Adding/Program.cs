@@ -12,7 +12,7 @@ namespace Adding
         {
             Calculator calculator = new Calculator();
 
-            Console.WriteLine("Enter up to 2 numbers to add.");
+            Console.WriteLine("Enter numbers to add: ");
             calculator.Input = Console.ReadLine();
 
             Console.WriteLine(calculator.AddNumbers());

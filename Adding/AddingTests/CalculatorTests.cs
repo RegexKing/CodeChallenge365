@@ -36,7 +36,7 @@ namespace Adding.Tests
         }
 
         [TestMethod()]
-        public void FormatNum_CheckMissingNumber_ReturnZero()
+        public void SimplifyNum_CheckMissingNumber_ReturnZero()
         {
             Calculator calculator = new Calculator();
             string missingNumber = "";
@@ -48,7 +48,7 @@ namespace Adding.Tests
         }
 
         [TestMethod()]
-        public void FormatNum_CheckInvalidNumber_ReturnZero()
+        public void SimplifyNum_CheckInvalidNumber_ReturnZero()
         {
             Calculator calculator = new Calculator();
             string invalidNumber = "foxygrandpa";
@@ -81,6 +81,30 @@ namespace Adding.Tests
             int calculatedSum = calculator.AddNumbers();
 
             Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void AddNumbers_UseNewLineDelimeter_ReturnCorrectSum()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "1\\n2,3";
+            int expectedSum = 6;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void SplitNums_ConvertMultipleNewLines_ReturnCorrectFormat()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "1\\n2,3\\n\\n5,6\\n7";
+            string[] expectedNums = { "1", "2", "3", "", "5", "6", "7" }; //expecting missing num with 2 adjacent newline characters
+
+            string[] splitNums = calculator.SplitNums();
+
+            CollectionAssert.AreEqual(splitNums, expectedNums, "Something went wrong in the split: ");
         }
     }
 }

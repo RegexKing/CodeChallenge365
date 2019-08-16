@@ -16,7 +16,7 @@ namespace Adding
         //add numbers from a formatted string
         public int AddNumbers()
         {
-            string[] numbers = Input.Split(','); //seperate numbers by comma
+            string[] numbers = SplitNums();
 
             int sum = 0;
 
@@ -47,6 +47,16 @@ namespace Adding
             }
 
             return strNum;
+        }
+
+        // split input into array of strings
+        public string[] SplitNums() {
+
+            string inputStr = Input.Replace("\\n", ","); //replace newline characters with comma
+
+            string[] numbersList = inputStr.Split(','); //seperate numbers by comma
+
+            return numbersList;
         }
     }
 }
