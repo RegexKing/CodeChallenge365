@@ -24,11 +24,11 @@ namespace Adding.Tests
         }
 
         [TestMethod()]
-        public void AddNumbers_InputThreeNumbers_ReturnSumOfFirstTwoNumbers()
+        public void AddNumbers_InputMoreThanTwoNumbers_ReturnCorrectSum()
         {
             Calculator calculator = new Calculator();
-            calculator.Input = "2,4,5";
-            int expectedSum = 6;
+            calculator.Input = "2,4,5,6,7";
+            int expectedSum = 24;
 
             int calculatedSum = calculator.AddNumbers();
 

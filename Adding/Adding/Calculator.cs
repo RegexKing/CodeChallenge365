@@ -20,18 +20,10 @@ namespace Adding
 
             int sum = 0;
 
-            string formattedNum1 = SimplifyNum(numbers[0]);
-            int num1 = Int32.Parse(formattedNum1);
-
-            sum += num1;
-
-            //add second number if it exists
-            if (numbers.Length > 1)
+            foreach (string addend in numbers)
             {
-                string formattedNum2 = SimplifyNum(numbers[1]);
-                int num2 = Int32.Parse(formattedNum2);
-
-                sum += num2;
+                string simplifiedNum = SimplifyNum(addend);
+                sum += Int32.Parse(simplifiedNum);
             }
 
             return sum;
