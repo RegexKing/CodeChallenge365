@@ -22,15 +22,15 @@ namespace Adding
 
             foreach (string addend in numbers)
             {
-                string simplifiedNum = SimplifyNum(addend);
-                sum += Int32.Parse(simplifiedNum);
+                int simplifiedNum = SimplifyNum(addend);
+                sum += simplifiedNum;
             }
 
             return sum;
         }
 
         //convert missing/invalid numbers to 0
-        public string SimplifyNum(string strNum)
+        public int SimplifyNum(string strNum)
         {
             bool isEmpty = string.IsNullOrEmpty(strNum);
 
@@ -41,10 +41,17 @@ namespace Adding
 
             if (isEmpty || ContainsInvalidChar(strNum)) //Convert missing/invalid numbers to 0
             {
-                return "0";
+                return 0;
             }
 
-            return strNum;
+            int castedNum = Int32.Parse(strNum);
+
+            if (castedNum > 1000)
+            {
+                return 0;
+            }
+
+            return castedNum;
         }
 
         // throw exception if negative number is found

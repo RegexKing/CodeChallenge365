@@ -40,9 +40,9 @@ namespace Adding.Tests
         {
             Calculator calculator = new Calculator();
             string missingNumber = "";
-            string expectedConversion = "0";
+            int expectedConversion = 0;
 
-            string conversion = calculator.SimplifyNum(missingNumber);
+            int conversion = calculator.SimplifyNum(missingNumber);
 
             Assert.AreEqual(expectedConversion, actual: conversion);
         }
@@ -52,9 +52,9 @@ namespace Adding.Tests
         {
             Calculator calculator = new Calculator();
             string invalidNumber = "foxygrandpa";
-            string expectedConversion = "0";
+            int expectedConversion = 0;
 
-            string conversion = calculator.SimplifyNum(invalidNumber);
+            int conversion = calculator.SimplifyNum(invalidNumber);
 
             Assert.AreEqual(expectedConversion, actual: conversion);
         }
@@ -131,6 +131,18 @@ namespace Adding.Tests
             Calculator calculator = new Calculator();
             calculator.Input = "7,-,13"; //expecting - to be evaluated as invalid char
             int expectedSum = 20;
+
+            int calculatedSum = calculator.AddNumbers();
+
+            Assert.AreEqual(expectedSum, actual: calculatedSum);
+        }
+
+        [TestMethod()]
+        public void AddNumbers_AddNumberGreaterThanThousand_ReturnCorrectSum()
+        {
+            Calculator calculator = new Calculator();
+            calculator.Input = "2,1001,6";
+            int expectedSum = 8;
 
             int calculatedSum = calculator.AddNumbers();
 
