@@ -269,5 +269,17 @@ namespace Adding.Tests
 
             Assert.IsNotNull(calculator.GetDelimList(input));
         }
+
+        [TestMethod()]
+        public void DisplayFormula_InvalidNumbersInInput_ReturnCorrectFormulaString()
+        {
+            Calculator calculator = new Calculator();
+            string input = "2,4,rrrr,1001,6";
+            string expectedOutput = "2+4+0+0+6 = 12";
+
+            string formula = calculator.DisplayFormula(input);
+
+            Assert.AreEqual(expectedOutput, actual: formula);
+        }
     }
 }

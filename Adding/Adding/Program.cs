@@ -13,9 +13,9 @@ namespace Adding
             Calculator calculator = new Calculator();
 
             Console.WriteLine("Enter numbers to add: ");
-            calculator.Input = Console.ReadLine();
+            string formula = calculator.DisplayFormula(Console.ReadLine());
 
-            Console.WriteLine(calculator.AddNumbers());
+            Console.WriteLine(formula);
 
             Console.Write("\nPress enter to exit.");
             Console.ReadLine();

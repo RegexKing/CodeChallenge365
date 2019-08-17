@@ -10,13 +10,43 @@ namespace Adding
     public class Calculator
     {
         public string Input { get; set; }
+        public List<int> addendList { get; } //list to hold numbers for formula
 
         private static readonly string _delimArgStart = "//";
         private static readonly string _delimArgEnd = "\\n";
         private static readonly char _bracketOpen = '[';
         private static readonly char _bracketEnd = ']';
 
-        public Calculator() { }
+        public Calculator()
+        {
+            addendList = new List<int>();
+        }
+
+        //loadNumbers
+        public string DisplayFormula(string formattedStringNum)
+        {
+            Input = formattedStringNum;
+            int sum = AddNumbers();
+            string formula = "";
+
+            for (int i = 0; i < addendList.Count; i++)
+            {
+                formula += addendList[i];
+
+                if (i == addendList.Count - 1)
+                {
+                    formula += " = "; //append "=" at end of list
+                }
+                else
+                {
+                    formula += "+"; //appdend "+" between nums
+                }
+            }
+
+            formula += sum;
+
+            return formula;
+        }
 
         //add numbers from a formatted string
         public int AddNumbers()
@@ -28,6 +58,7 @@ namespace Adding
             foreach (string addend in numbers)
             {
                 int simplifiedNum = SimplifyNum(addend); //reduces invalid/missing numbers to 0
+                addendList.Add(simplifiedNum);
                 sum += simplifiedNum;
             }
 
